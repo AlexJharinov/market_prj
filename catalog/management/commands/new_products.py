@@ -7,12 +7,21 @@ class Command(BaseCommand):
     help = "Добавление новых продуктов в базу"
 
     def handle(self, *args, **options):
-        category = Category.objects.get_or_create(name_category='Техника', desc_category='Все что нужно')
+        Product.objects.all().delete()
+        Category.objects.all().delete()
+
+        category = Category.objects.create(name_category='Техника', desc_category='Все что нужно')
+
+        category_1 =  Category.objects.create(name_category='Одежда', desc_category='Носят люди')
+
+
 
 
         product = [
             {'name_product': 'Телевзор', 'desc': '3 дюйма', 'category': category, 'p_price': '10'},
             {'name_product': 'Плеер', 'desc': 'Касетный', 'category': category, 'p_price': '100'},
+            {'name_product': 'Майка', 'desc': 'Красная', 'category': category_1, 'p_price': '100'},
+            {'name_product': 'Носки', 'desc': 'Для четырех пальцев', 'category': category_1, 'p_price': '13'},
                 ]
 
 
