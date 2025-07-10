@@ -1,11 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
+from django.template.context_processors import request
 
+from catalog.models import Product
 
 
 # Create your views here.
-def home(request):
-    return render(request, template_name= 'home.html')
+def base(request):
+    products = Product.objects.all()
+    context = {"products": products}
+    return render(request, template_name='detail_inf.html', context=context)
 
 def contacts(request):
     if request.method == "POST":
@@ -18,6 +22,8 @@ def contacts(request):
     return render(request, template_name='contacts.html')
 
 
-def detail(request):
-    return render (request, template_name='detail_inf.html')
+def product_detail(request, pk):
+    product = get_object_or_404(Product,pk=pk)
+    context = {"product": product}
+    return render(request, template_name='product_detail.html', context=context)
 

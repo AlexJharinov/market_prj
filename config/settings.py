@@ -13,7 +13,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-from catalog.views import detail
+
 
 load_dotenv(override=True)
 
