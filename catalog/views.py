@@ -1,7 +1,8 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.template.context_processors import request
 
+from catalog.forms import ProductForm
 from catalog.models import Product
 
 
@@ -27,3 +28,12 @@ def product_detail(request, pk):
     context = {"product": product}
     return render(request, template_name='product_detail.html', context=context)
 
+def add_product(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('catalog:base')
+    else:
+        form = ProductForm()
+    return render(request, 'create.html', {'form': form})
