@@ -1,16 +1,17 @@
+from symtable import Class
+
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from django.template.context_processors import request
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView
 
 from catalog.forms import ProductForm
 from catalog.models import Product
 
+class ProductListView(ListView):
+    model = Product
 
-# Create your views here.
-def base(request):
-    products = Product.objects.all()
-    context = {"products": products}
-    return render(request, template_name='detail_inf.html', context=context)
 
 def contacts(request):
     if request.method == "POST":
@@ -23,17 +24,23 @@ def contacts(request):
     return render(request, template_name='contacts.html')
 
 
-def product_detail(request, pk):
-    product = get_object_or_404(Product,pk=pk)
-    context = {"product": product}
-    return render(request, template_name='product_detail.html', context=context)
 
-def add_product(request):
-    if request.method == 'POST':
-        form = ProductForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('catalog:base')
-    else:
-        form = ProductForm()
-    return render(request, 'create.html', {'form': form})
+class ProductDetailView(DetailView):
+    model = Product
+
+
+class ProductCreateView(CreateView):
+    model = Product
+    fields = ("name_product", "desc", "image", "category", "p_price")
+    success_url = reverse_lazy('catalog:product_list')
+
+
+# def add_product(request):
+#     if request.method == 'POST':
+#         form = ProductForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('catalog:base')
+#     else:
+#         form = ProductForm()
+#     return render(request, 'product_form.html', {'form': form})
