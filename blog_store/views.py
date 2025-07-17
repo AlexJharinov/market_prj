@@ -1,3 +1,8 @@
-from django.shortcuts import render
 
-# Create your views here.
+from django.views.generic import DetailView
+
+from blog_store.models import Blog
+
+
+class BlogDetailView(DetailView):
+    model = Blog
