@@ -5,7 +5,6 @@ from django.http import HttpResponse
 from django.template.context_processors import request
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView
-
 from catalog.forms import ProductForm
 from catalog.models import Product
 
@@ -21,7 +20,7 @@ def contacts(request):
 
         return HttpResponse(f"Спасибо, {name}! Сообщение получено.")
 
-    return render(request, template_name='contacts.html')
+    return render(request, template_name='catalog/contacts.html')
 
 
 
