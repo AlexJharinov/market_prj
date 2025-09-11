@@ -28,8 +28,6 @@ if settings.DEBUG:
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('', include('catalog.urls', namespace='catalog')),
+    path('catalog/', include('catalog.urls', namespace='catalog')),
     path('blog_store/', include('blog_store.urls')),
-    path('blog_store/', include('blog_store.urls')),
-
 ]
