@@ -1,5 +1,5 @@
 from django.urls import reverse, reverse_lazy
-from django.views.generic import DetailView, ListView, UpdateView
+from django.views.generic import DetailView, ListView, UpdateView, CreateView, DeleteView
 
 from blog_store.models import Blog
 
@@ -22,17 +22,22 @@ class BlogDetailView(DetailView):
         obj.save(update_fields=["number_views"])  # сохраняем только поле views
         return obj
 
-class BlogUpdateView(UpdateView):
-    model = Blog
-    fields = ['title', 'content', 'publication_sign']
-    template_name = 'blog_store/blog_edit.html'
-
-    def get_success_url(self):
-
-        return reverse('blog_detail', kwargs={'pk': self.object.pk})
 
 class BlogEditView(UpdateView):
     model = Blog
     fields = ['title', 'content', 'publication_sign']
     template_name = 'blog_store/blog_edit.html'
     success_url = reverse_lazy('blog_store:blog_list')
+
+
+class BlogCreateView(CreateView):
+    model = Blog
+    fields = ("title", "content", "preview", "publication_sign")
+    template_name = "blog_store/blog_create.html"
+    success_url = reverse_lazy('blog_store:blog_list')
+
+
+class BlogDeleteView(DeleteView):
+    model = Blog
+    template_name = "blog_store/blog_delete.html"
+    success_url = reverse_lazy("blog_store:blog_list")

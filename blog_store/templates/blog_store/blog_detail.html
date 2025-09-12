@@ -9,6 +9,7 @@
     <div>
         <h3>{{ blog.title }}</h3>
         <a href="{% url 'blog_store:blog_edit' blog.pk %}" class="btn btn-sm btn-warning">Редактировать</a>
+        <a href="{% url 'blog_store:blog_delete' blog.pk %}" class="btn btn-danger">Удалить</a>
     </div>
     <a href="{% url 'blog_store:blog_list' %}" class="btn btn-secondary">Назад к блогу</a>
   </div>
