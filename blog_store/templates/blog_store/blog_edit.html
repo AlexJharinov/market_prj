@@ -1,6 +1,10 @@
+{% extends "blog_store/base.html" %}
+
 {% block title %}Редактирование статьи{% endblock %}
 
 {% block content %}
+
+
 <h1>
   {% if object %}
     Редактировать статью: {{ object.title }}

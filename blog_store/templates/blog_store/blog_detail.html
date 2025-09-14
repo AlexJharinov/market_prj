@@ -1,13 +1,17 @@
+{% extends "blog_store/base.html" %}
 
 {% url 'blog_store:blog_detail' blog.pk %}
 
 {% block content %}
   <div class="container mt-4">
-    <h1>{{ blog.title }}</h1>
-    <p class="text-muted">{{ blog.pub_date }}</p>
-    <p>{{ blog.content }}</p>
+      <img src="{{ blog.preview.url }}" alt="{{ blog.title }}">
+      <h1> Название блога: {{ blog.title }}</h1>
+      <p class="text-muted">{{ blog.pub_date }}</p>
+      <p> Описание: {{ blog.content }}</p>
+      <p> Количество просмотров: {{ blog.number_views }}</p>
+
     <div>
-        <h3>{{ blog.title }}</h3>
+<!--        <h3>{{ blog.title }}</h3>-->
         <a href="{% url 'blog_store:blog_edit' blog.pk %}" class="btn btn-sm btn-warning">Редактировать</a>
         <a href="{% url 'blog_store:blog_delete' blog.pk %}" class="btn btn-danger">Удалить</a>
     </div>
