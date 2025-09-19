@@ -1,0 +1,23 @@
+{% extends "blog_store/base.html" %}
+
+{% block title %}Редактирование статьи{% endblock %}
+
+{% block content %}
+
+
+<h1>
+  {% if object %}
+    Редактировать статью: {{ object.title }}
+  {% else %}
+    Создать новую статью
+  {% endif %}
+</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
+
+<a href="{% url 'blog_store:blog_list' %}">Назад к списку статей</a>
+{% endblock %}

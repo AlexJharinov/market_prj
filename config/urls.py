@@ -22,12 +22,13 @@ from django.conf.urls.static import static
 from catalog.urls import urlpatterns
 
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('catalog.urls', namespace='catalog')),
-    ]
+
+    path('catalog/', include('catalog.urls', namespace='catalog')),
+    path('blog_store/', include('blog_store.urls')),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
