@@ -21,7 +21,7 @@ class UserCreateView(CreateView):
         token = secrets.token_hex(16)
         user.token = token
         user.save()
-        host = self.request.get_host
+        host = self.request.get_host()
         url = f'http://{host}/users/email_confirm/{token}/'
         send_mail(
             subject="Подтверждение почты",
@@ -36,5 +36,5 @@ def email_verification(request, token):
     user = get_object_or_404(User, token=token)
     user.is_active = True
     user.save()
-    return redirect(reverse("users:/login"))
+    return redirect(reverse("users:login"))
 
