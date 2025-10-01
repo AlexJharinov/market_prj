@@ -28,6 +28,8 @@ urlpatterns = [
 
     path('catalog/', include('catalog.urls', namespace='catalog')),
     path('blog_store/', include('blog_store.urls')),
+    path('users/', include('users.urls', namespace='users')),
+
 ]
 
 if settings.DEBUG:
