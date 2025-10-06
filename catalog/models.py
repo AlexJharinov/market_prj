@@ -1,5 +1,8 @@
 from django.db import models
 
+from users.models import User
+
+
 # Create your models here.
 
 # Описание моделей:
@@ -36,6 +39,15 @@ class Product(models.Model):
     p_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="цена")
     created_at = models.DateField(auto_now_add=True)
     mod_date = models.DateField(auto_now=True)
+    publication_sign = models.BooleanField(default=False, verbose_name="Опубликовано")
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='products',
+        verbose_name='Владелец'
+    )
+
+
 
     def __str__(self):
         return f"{self.name_product} {self.category}"
@@ -44,6 +56,10 @@ class Product(models.Model):
         verbose_name = "продукт"
         verbose_name_plural = "продукты"
         ordering = ["p_price"]
+        permissions = [
+            ("can_unpublish_product", "Может отменять публикацию продукта"),
+            ("can_delete_product", "Может удалять продукты других пользователей"),
+        ]
 
 
 

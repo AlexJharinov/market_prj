@@ -54,3 +54,12 @@ class ProductForm(forms.ModelForm):
         if price is not None and price < 0:
             raise forms.ValidationError("Цена продукта не может быть отрицательной")
         return price
+
+
+
+
+
+class ProductModeratorForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ['publication_sign']
