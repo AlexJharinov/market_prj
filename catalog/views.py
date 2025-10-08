@@ -1,11 +1,9 @@
 from symtable import Class
-
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-
 from catalog.forms import ProductForm, ProductModeratorForm
 from catalog.models import Product
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -13,9 +11,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 
 class ProductListView(ListView):
     model = Product
-
+    """
+        Отображает список всех объектов модели Product.
+    """
 
 def contacts(request):
+    """
+        Обрабатывает страницу контактов и принимает сообщения от пользователей и дает обратную связь.
+    """
     if request.method == "POST":
         name = request.POST.get("name")
         phone = request.POST.get("phone")
@@ -28,38 +31,49 @@ def contacts(request):
 
 
 class ProductDetailView(DetailView):
-    model = Product
+        """
+            Класс для отображения деталей одного продукта
+        """
+
+        model = Product
 
 
 class ProductCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    """
+        Класс для создания продукта.
+    """
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy('catalog:product_list')
     permission_required = 'catalog.add_product'
-
-
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
         return super().form_valid(form)
 
 
-
-
-
 class ProductEditView(LoginRequiredMixin, UpdateView):
+    """
+    Класс для редактирования продукта.
+    """
     model = Product
     form_class = ProductForm
     template_name = 'catalog/product_edit.html'
     success_url = reverse_lazy('catalog:product_list')
 
     def dispatch(self, request, *args, **kwargs):
+        """
+            Проверяет права доступа на владельца и суперюзера в случае отсутствия прав вызывает ошибку
+        """
         product = self.get_object()
         if product.owner != request.user and not request.user.is_superuser:
             raise PermissionDenied("Вы не владелец этого продукта.")
         return super().dispatch(request, *args, **kwargs)
 
     def get_form_class(self):
+        """
+            Проверка на пользователя и возвращения формы в зависимости от прав пользователя
+        """
         user = self.request.user
         if user.is_superuser:
             return ProductForm
@@ -69,14 +83,19 @@ class ProductEditView(LoginRequiredMixin, UpdateView):
 
 
 class ProductDeleteView(LoginRequiredMixin,PermissionRequiredMixin, DeleteView):
+    """
+        Класс для удаления продукта.
+    """
     model = Product
     template_name = "catalog/product_delete.html"
     success_url = reverse_lazy("catalog:product_list")
     permission_required = "catalog.delete_product"
 
     def dispatch(self, request, *args, **kwargs):
+        """
+            Проверяет права пользователя и в зависимости от прав дает разрешение или вызывает ошибку.
+        """
         product = self.get_object()
-
 
         if product.owner == request.user or request.user.has_perm(
                 "catalog.can_delete_product") or request.user.is_superuser:

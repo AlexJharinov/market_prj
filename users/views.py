@@ -11,11 +11,17 @@ from users.models import User
 
 
 class UserCreateView(CreateView):
+    """
+        Класс для создания пользователя.
+    """
     model = User
     form_class = UserRegisterForm
     success_url = reverse_lazy('users:login')
 
     def form_valid(self, form):
+        """
+            Метод дял регистрации пользователя и валидации пользователя
+        """
         user = form.save()
         user.is_active = False
         token = secrets.token_hex(16)
@@ -33,6 +39,9 @@ class UserCreateView(CreateView):
         return super().form_valid(form)
 
 def email_verification(request, token):
+    """
+         Активирует пользователя по токену подтверждения электронной почты.
+    """
     user = get_object_or_404(User, token=token)
     user.is_active = True
     user.save()
