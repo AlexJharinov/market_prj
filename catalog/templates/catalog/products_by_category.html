@@ -1,0 +1,61 @@
+{% extends 'catalog/base.html' %}
+
+{% block title %}{{ category.name_category }} — товары{% endblock %}
+
+{% block content %}
+  <form style="margin-bottom:1rem;">
+    <label for="category-select">Категория:</label>
+    <select id="category-select" onchange="
+      if (this.value) {
+        const url = '{% url 'catalog:products_by_category' 0 %}'.replace('/0/', '/' + this.value + '/');
+        window.location.href = url;
+      }">
+      {% for c in categories %}
+        <option value="{{ c.id }}" {% if c.id == category.id %}selected{% endif %}>
+          {{ c.name_category }}
+        </option>
+      {% endfor %}
+    </select>
+  </form>
+
+  <h1>Категория: {{ category.name_category }}</h1>
+
+  {% if category.desc_category %}
+    <p>{{ category.desc_category }}</p>
+  {% endif %}
+
+  {% if products %}
+    <ul class="product-list">
+      {% for p in products %}
+        <li class="product-item">
+          <a href="{% url 'catalog:product_detail' p.pk %}">{{ p.name_product }}</a>
+          {% if p.p_price %}
+            <div class="product-price">{{ p.p_price }} ₽</div>
+          {% endif %}
+          {% if p.image %}
+            <div class="product-thumb">
+              <img src="{{ p.image.url }}" alt="{{ p.name_product }}" style="max-width:160px;">
+            </div>
+          {% endif %}
+          {% if p.desc %}
+            <p>{{ p.desc|truncatechars:140 }}</p>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+
+    {% if is_paginated %}
+      <nav class="pagination">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}">‹ Предыдущая</a>
+        {% endif %}
+        <span>Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}">Следующая ›</a>
+        {% endif %}
+      </nav>
+    {% endif %}
+  {% else %}
+    <p>В этой категории пока нет опубликованных товаров.</p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "catalog/base.html" %}
+
+{% block title %}Выбор категории{% endblock %}
+
+{% block content %}
+  <h1>Выберите категорию</h1>
+
+  {% if categories %}
+    <form method="post" style="margin: 1rem 0;">
+      {% csrf_token %}
+      <label for="category_id">Категория:</label>
+      <select name="category_id" id="category_id">
+        {% for c in categories %}
+          <option value="{{ c.id }}">{{ c.name_category }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit">Показать</button>
+    </form>
+
+    <ul>
+      {% for c in categories %}
+        <li><a href="{% url 'catalog:products_by_category' c.id %}">{{ c.name_category }}</a></li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Категории пока не созданы.</p>
+  {% endif %}
+{% endblock %}
