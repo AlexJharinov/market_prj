@@ -1,19 +1,24 @@
-from symtable import Class
+
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from catalog.forms import ProductForm, ProductModeratorForm
 from catalog.models import Product
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
+from catalog.services import get_product_from_cache, get_products_by_category_id
+
 
 class ProductListView(ListView):
-    model = Product
     """
         Отображает список всех объектов модели Product.
     """
+    model = Product
+
+    def get_queryset(self):
+        return get_product_from_cache()
 
 def contacts(request):
     """
@@ -102,5 +107,40 @@ class ProductDeleteView(LoginRequiredMixin,PermissionRequiredMixin, DeleteView):
             return super().dispatch(request, *args, **kwargs)
 
         raise PermissionDenied("У вас нет прав.")
+
+from catalog.models import Product, Category
+
+
+class ProductsByCategoryView(ListView):
+    template_name = "catalog/products_by_category.html"
+    context_object_name = "products"
+    paginate_by = 12
+
+    def get_queryset(self):
+        self.category_id = int(self.kwargs.get("pk"))
+        self.category, qs = get_products_by_category_id(self.category_id, published_only=True)
+        return qs
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["category"] = self.category
+        ctx["categories"] = Category.objects.all().order_by("name_category")
+        return ctx
+
+
+class CategoryChooserView(TemplateView):
+    template_name = "catalog/category_choose.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["categories"] = Category.objects.all().order_by("name_category")
+        return ctx
+
+    def post(self, request, *args, **kwargs):
+        category_id = request.POST.get("category_id")
+        if category_id:
+            return redirect("catalog:products_by_category", pk=category_id)
+        return self.get(request, *args, **kwargs)
+
 
 
