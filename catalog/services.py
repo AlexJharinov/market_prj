@@ -1,5 +1,7 @@
 from django.core.cache import cache
-
+from django.db.models import QuerySet
+from django.shortcuts import get_object_or_404
+from catalog.models import Category, Product
 from catalog.models import Product
 from config.settings import CACHES_ENABLED
 
@@ -21,18 +23,15 @@ def get_product_from_cache():
 from django.shortcuts import get_object_or_404
 from catalog.models import Category, Product
 
-def get_products_by_category_id(category_id: int, published_only: bool = True):
+def products_by_category_id(category_id: int, published_only: bool = True) -> QuerySet[Product]:
     """
-    Вернёт (category, queryset) для всех продуктов указанной категории по её id.
+    Возвращает QuerySet продуктов по ID категории.
+    Если категории с таким ID нет — вернётся пустой QuerySet.
     """
-    category = get_object_or_404(Category, pk=category_id)
-
-    queryset = (
+    qs = (
         Product.objects
         .select_related("category", "owner")
-        .filter(category=category)
+        .filter(category_id=category_id)
         .order_by("-created_at", "-id")
     )
-    if published_only:
-        queryset = queryset.filter(publication_sign=True)
-    return category, queryset
+    return qs.filter(publication_sign=True) if published_only else qs

@@ -158,12 +158,15 @@ EMAIL_USE_SSL = True
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+REDIS_HOST = os.getenv('REDIS_HOST')
+REDIS_PORT= os.getenv('REDIS_PORT')
+
 CACHES_ENABLED = True
 if CACHES_ENABLED:
     CACHES = {
         'default': {
             'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-            'LOCATION': 'redis://localhost:6379/db_market'
+            'LOCATION': f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
         }
     }
 
