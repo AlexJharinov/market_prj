@@ -21,4 +21,5 @@ urlpatterns = [
     path("category/<int:pk>/", ProductsByCategoryView.as_view(), name="products_by_category"),
     path("category/", CategoryChooserView.as_view(), name="category_choose"),  # сначала сюда
 
+
 ]

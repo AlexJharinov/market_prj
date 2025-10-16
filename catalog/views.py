@@ -1,6 +1,6 @@
 
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
@@ -8,7 +8,7 @@ from catalog.forms import ProductForm, ProductModeratorForm
 from catalog.models import Product
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
-from catalog.services import get_product_from_cache, get_products_by_category_id
+from catalog.services import get_product_from_cache, products_by_category_id
 
 
 class ProductListView(ListView):
@@ -117,14 +117,12 @@ class ProductsByCategoryView(ListView):
     paginate_by = 12
 
     def get_queryset(self):
-        self.category_id = int(self.kwargs.get("pk"))
-        self.category, qs = get_products_by_category_id(self.category_id, published_only=True)
-        return qs
+        self.category = get_object_or_404(Category, pk=self.kwargs["pk"])  # HTTP-уровень здесь
+        return products_by_category_id(self.category.id, published_only=True)
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["category"] = self.category
-        ctx["categories"] = Category.objects.all().order_by("name_category")
         return ctx
 
 
